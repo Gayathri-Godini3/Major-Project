@@ -6,18 +6,24 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Exam, Question, StudentAnswer, StudentExamAttempt
-from .serializers import ExamSerializer, QuestionSerializer
+from .models import Exam, Question, StudentAnswer, StudentExamAttempt,ContactMessage
+from .serializers import ExamSerializer, QuestionSerializer, ContactMessageSerializer
 from django.http import JsonResponse
 from django.db import models
 import smtplib
 import random
 import time
+#from pymongo import MongoClient
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.conf import settings
 from .utils import send_email_custom
 import traceback
+
+# ✅ Connect to MongoDB using PyMongo
+# client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
+# db = client['online_exam_db']  # Change this if needed
+# users_collection = db["api_customuser"]  # Ensure this matches your actual collection name
 
 def homepage(request):
     return JsonResponse({"message":"Welcome to the Online Exam System API"})
@@ -52,8 +58,20 @@ def register_user(request):
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # # ✅ Use PyMongo to check if the username already exists
+        # if users_collection.find_one({"username": username}):
+        #     return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
 
         user = User.objects.create(username=username, password=make_password(password), email=email, role=role)
+        # # ✅ Insert user into MongoDB
+        # new_user = {
+        #     "username": username,
+        #     "email": email,
+        #     "password": make_password(password),  # Hash password
+        #     "role": role
+        # }
+        # users_collection.insert_one(new_user)
         verified_emails.remove(email)
 
         #del otp_storage[email]
@@ -314,3 +332,11 @@ def reset_password(request):
 
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def submit_contact(request):
+    serializer = ContactMessageSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Message received successfully!"}, status=201)
+    return Response(serializer.errors, status=400)
