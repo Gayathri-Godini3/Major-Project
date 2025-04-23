@@ -11,6 +11,8 @@ import TakeExam from "./pages/TakeExam";
 import ExamSubmitted from "./pages/ExamSubmitted";
 import ViewScore from "./pages/ViewScore";
 import ForgotPassword from "./pages/ForgotPassword";
+import FaceTest from "./pages/FaceTest";
+import Disqualified from "./pages/Disqualified";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const ProtectedRoute = ({ element, role }) => {
@@ -37,6 +39,8 @@ function App() {
           <Route path="/teacher-dashboard" element={<ProtectedRoute element={<TeacherDashboard />} role="teacher" />} />
           <Route path="/admin-dashboard" element={<ProtectedRoute element={<AdminDashboard />} role="admin" />} />
           <Route path="/exam-submitted" element={<ExamSubmitted />} />
+          <Route path="/face-test" element={<FaceTest />} />
+          <Route path="/disqualified" element={<Disqualified />} />
         </Routes>
       </AuthProvider>
     </Router>

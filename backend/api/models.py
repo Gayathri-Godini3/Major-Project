@@ -23,6 +23,7 @@ class CustomUser(AbstractUser):
 class Exam(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
+    duration = models.IntegerField(default=3) #in minutes
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -65,3 +66,15 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return self.name + " - " + self.email
+
+class DisqualifiedAttempt(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    reason = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'exam')  # prevent duplicate records
+
+    def __str__(self):
+        return f"{self.user.username} - {self.exam.title} - {self.reason}"

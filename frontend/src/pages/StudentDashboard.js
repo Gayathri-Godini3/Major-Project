@@ -10,17 +10,7 @@ const StudentDashboard = () => {
   const [exams, setExams] = useState([]);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const loadExams = async () => {
-  //     try {
-  //       const data = await fetchExams();
-  //       setExams(data);
-  //     } catch (error) {
-  //       console.error("Error fetching exams", error);
-  //     }
-  //   };
-  //   loadExams();
-  // }, []);
+
   useEffect(() => {
     const loadExams = async () => {
       try {
