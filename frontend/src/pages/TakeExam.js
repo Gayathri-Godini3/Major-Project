@@ -228,7 +228,21 @@ const TakeExam = () => {
     <Container className="d-flex justify-content-center align-items-center vh-100">
       {!examStarted ? (
         <div className="text-center">
-          <h2>Click below to start your exam</h2>
+        <Card className="mb-4 p-4 shadow-sm" style={{ maxWidth: "600px", backgroundColor: "#fff7e6", borderColor: "#ffc107", borderWidth: "2px" }}>
+          <h4 className="text-center text-warning mb-3">⚠️ Proctoring Instructions</h4>
+          <ul className="text-start" style={{ fontSize: "1.1rem", lineHeight: "1.8" }}>
+            <li>📸 Stay visible to the webcam at all times.</li>
+            <li>👤 Only <strong>one person</strong> should be visible in the camera.</li>
+            <li>🚫 Avoid <strong>phones, books, laptops, or any unauthorized objects.</strong></li>
+            <li>🖥️ <strong>Do not exit fullscreen</strong> mode or switch tabs/windows.</li>
+            <li>⚡ 3 violations will result in <strong style={{ color: "red" }}>automatic disqualification</strong>.</li>
+          </ul>
+          <p className="text-danger text-center mt-3" style={{ fontSize: "0.95rem" }}>
+            By clicking <strong>"Start Exam"</strong>, you agree to follow all proctoring rules.
+          </p>
+        </Card>
+
+          {/* <h2>Click below to start your exam</h2>
           <Card className="mb-4 p-3 border border-warning">
             <h5 className="text-warning">⚠️ Proctoring Instructions</h5>
             <ul>
@@ -241,9 +255,22 @@ const TakeExam = () => {
             <p className="text-danger mb-0">
               By clicking "Start Exam", you agree to follow the proctoring rules.
             </p>
-          </Card>
+          </Card> */}
 
-          <Button variant="success" onClick={startExam}>
+          <Button
+              variant="success"
+              onClick={startExam}
+              style={{
+                marginTop: "20px",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "10px 30px",
+                borderRadius: "10px",
+                backgroundColor: "#ff9800",
+                border: "none",
+                color: "white",
+              }}
+              >
             Start Exam
           </Button>
         </div>

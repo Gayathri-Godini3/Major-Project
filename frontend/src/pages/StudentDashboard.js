@@ -67,7 +67,22 @@ const StudentDashboard = () => {
                     {/* <Button variant="success" onClick={() => handleAttemptExam(exam.id)}>
                       Attempt Exam
                     </Button> */}
-                    {!exam.attempted ? (
+                    {exam.status === "Attempted" ? (
+                      <>
+                        <span className="text-success">✅ Attempted</span>
+                        <Button variant="info" onClick={() => handleViewScore(exam.id)} className="ms-2">
+                          View Score
+                        </Button>
+                      </>
+                    ) : exam.status === "Disqualified" ? (
+                      <span className="text-danger fw-bold">❌ Disqualified</span>
+                    ) : (
+                      <Button variant="success" onClick={() => handleAttemptExam(exam.id)}>
+                        ⏳ Attempt Exam
+                      </Button>
+                    )}
+
+                    {/* {!exam.attempted ? (
                       <Button variant="success" onClick={() => handleAttemptExam(exam.id)}>
                         Attempt Exam
                       </Button>
@@ -78,7 +93,7 @@ const StudentDashboard = () => {
                           View Score
                         </Button>
                       </>
-                    )}
+                    )} */}
                   </td>
                 </tr>
               ))}

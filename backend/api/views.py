@@ -281,13 +281,17 @@ def get_student_exams(request):
     # Convert to a dictionary for quick lookup
     attempted_exam_ids = {attempt.exam.id for attempt in student_attempts}
 
+    # Map exam ID to its status
+    attempt_status_map = {attempt.exam.id: attempt.status for attempt in student_attempts}
+
     exam_data = []
     for exam in exams:
         exam_data.append({
             "id": exam.id,
             "title": exam.title,
             "description": exam.description,
-            "attempted": exam.id in attempted_exam_ids
+            #"attempted": exam.id in attempted_exam_ids
+            "status": attempt_status_map.get(exam.id, "Pending")
         })
 
     return Response(exam_data, status=status.HTTP_200_OK)
@@ -388,6 +392,17 @@ def submit_contact(request):
         return Response({"message": "Message received successfully!"}, status=201)
     return Response(serializer.errors, status=400)
 
+def save_disqualification(user, exam_id):
+    try:
+        exam = Exam.objects.get(id=exam_id)
+        StudentExamAttempt.objects.get_or_create(
+            student=user,
+            exam=exam,
+            defaults={"status": "Disqualified"}  # Or customize this field if you have different model design
+        )
+    except Exception as e:
+        print("Error saving disqualification:", e)
+
 def decode_base64_image(image_data):
     try:
         if ',' in image_data:
@@ -474,6 +489,7 @@ def verify_face(request):
             log_violation(request.user, "no_person", image_data=image_data)
 
             if strikes >= 3:
+                save_disqualification(request.user, request.data.get('exam_id'))
                 DisqualifiedAttempt.objects.get_or_create(user=request.user, exam=exam, defaults={
                     "reason": "no_person"
                 })
@@ -485,6 +501,7 @@ def verify_face(request):
             log_violation(request.user, "multiple_faces", image_data=image_data)
 
             if strikes >= 3:
+                save_disqualification(request.user, request.data.get('exam_id'))
                 DisqualifiedAttempt.objects.get_or_create(user=request.user, exam=exam, defaults={
                     "reason": "multiple_faces"
                 })
@@ -496,6 +513,7 @@ def verify_face(request):
             log_violation(request.user, "unauthorized_object", image_data=image_data)
 
             if strikes >= 3:
+                save_disqualification(request.user, request.data.get('exam_id'))
                 DisqualifiedAttempt.objects.get_or_create(user=request.user, exam=exam, defaults={
                     "reason": "unauthorized_object"
                 })

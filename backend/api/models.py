@@ -54,6 +54,8 @@ class StudentExamAttempt(models.Model):
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
     attempted = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=[('Attempted', 'Attempted'), ('Disqualified', 'Disqualified')], default='Attempted')
+
 
     def __str__(self):
         return f"{self.student.username} - {self.exam.title} - {'Attempted' if self.attempted else 'Not Attempted'}"
